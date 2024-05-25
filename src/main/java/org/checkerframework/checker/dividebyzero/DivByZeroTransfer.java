@@ -78,69 +78,38 @@ public class DivByZeroTransfer extends CFTransfer {
       Comparison operator, AnnotationMirror lhs, AnnotationMirror rhs) {
     switch (operator) {
       case EQ:
-        if (equal(rhs, reflect(Zero.class))) {
-          return glb(lhs, reflect(Zero.class));
-        }
-
-        if (equal(lhs, reflect(Zero.class))) {
-          return glb(rhs, reflect(Zero.class));
+        if (isZero(rhs)) {
+          AnnotationMirror result = glb(lhs, reflect(Zero.class));
+          return result;
         }
 
         return lhs;
       case NE:
-        /* if (AnnotationUtils.areSame(rhs, reflect(Zero.class))) {
-          if (AnnotationUtils.areSame(lhs, reflect(PositiveOrZero.class))) {
+        if (isZero(rhs)) {
+          if (isPositiveOrZero(lhs)) {
             return glb(lhs, reflect(Positive.class));
           }
 
-          if (AnnotationUtils.areSame(lhs, reflect(NegativeOrZero.class))) {
+          if (isNegativeOrZero(lhs)) {
             return glb(lhs, reflect(Negative.class));
           }
 
-          if (AnnotationUtils.areSame(lhs, reflect(Top.class))) {
-            return reflect(NonZero.class);
-          }
-        } */
-
-        /* if (equal(rhs, reflect(Zero.class))) {
-          if (equal(lhs, reflect(PositiveOrZero.class))) {
-            return glb(lhs, reflect(Positive.class));
-          }
-
-          if (equal(lhs, reflect(NegativeOrZero.class))) {
-            return glb(lhs, reflect(Negative.class));
-          }
-
-          if (equal(lhs, reflect(Top.class))) {
-            return reflect(NonZero.class);
+          if (isTop(lhs)) {
+            return glb(lhs, reflect(NonZero.class));
           }
         }
 
-        if (equal(lhs, reflect(Zero.class))) {
-          if (equal(rhs, reflect(PositiveOrZero.class))) {
-            return glb(rhs, reflect(Positive.class));
-          }
-
-          if (equal(rhs, reflect(NegativeOrZero.class))) {
-            return glb(rhs, reflect(Negative.class));
-          }
-
-          if (equal(rhs, reflect(Top.class))) {
-            return reflect(NonZero.class);
-          }
-        } */
-
-        return reflect(NonZero.class);
+        return lhs;
       case LT:
-        if (equal(rhs, reflect(Zero.class))
-          || equal(rhs, reflect(NegativeOrZero.class))) {
+        if (isZero(rhs)
+          || isNegativeOrZero(rhs)) {
           return glb(lhs, reflect(Negative.class));
         }
 
         return lhs;
       case GT:
-        if (equal(rhs, reflect(Zero.class))
-          || equal(rhs, reflect(PositiveOrZero.class))) {
+        if (isZero(rhs)
+          || isPositiveOrZero(rhs)) {
             return glb(lhs, reflect(Positive.class));
         }
         return lhs;
@@ -167,398 +136,527 @@ public class DivByZeroTransfer extends CFTransfer {
       BinaryOperator operator, AnnotationMirror lhs, AnnotationMirror rhs) {
     switch (operator) {
       case PLUS:
-        switch (lhs.toString()) {
-          case "NonZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(Top.class);
-              case "Negative":
-                return reflect(Top.class);
-              case "Zero":
-                return reflect(NonZero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "PositiveOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(PositiveOrZero.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(Positive.class);
-              case "Negative":
-                return reflect(Top.class);
-              case "Zero":
-                return reflect(PositiveOrZero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "NegativeOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(NegativeOrZero.class);
-              case "Positive":
-                return reflect(Top.class);
-              case "Negative":
-                return reflect(Negative.class);
-              case "Zero":
-                return reflect(NegativeOrZero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Positive":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Positive.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(Positive.class);
-              case "Negative":
-                return reflect(Top.class);
-              case "Zero":
-                return reflect(Positive.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Negative":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Negative.class);
-              case "Positive":
-                return reflect(Top.class);
-              case "Negative":
-                return reflect(Negative.class);
-              case "Zero":
-                return reflect(Negative.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Zero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(NonZero.class);
-              case "PositiveOrZero":
-                return reflect(PositiveOrZero.class);
-              case "NegativeOrZero":
-                return reflect(NegativeOrZero.class);
-              case "Positive":
-                return reflect(Positive.class);
-              case "Negative":
-                return reflect(Negative.class);
-              case "Zero":
-                return reflect(Zero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Top":
-            return reflect(Top.class);
-        }
-        break;
-      case MINUS:
-        switch (lhs.toString()) {
-          case "NonZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(Top.class);
-              case "Negative":
-                return reflect(Top.class);
-              case "Zero":
-                return reflect(NonZero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "PositiveOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(PositiveOrZero.class);
-              case "Positive":
-                return reflect(Top.class);
-              case "Negative":
-                return reflect(Positive.class);
-              case "Zero":
-                return reflect(PositiveOrZero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "NegativeOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(NegativeOrZero.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(Negative.class);
-              case "Negative":
-                return reflect(Top.class);
-              case "Zero":
-                return reflect(NegativeOrZero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Positive":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Positive.class);
-              case "Positive":
-                return reflect(Top.class);
-              case "Negative":
-                return reflect(Positive.class);
-              case "Zero":
-                return reflect(Positive.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Negative":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Negative.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(Negative.class);
-              case "Negative":
-                return reflect(Top.class);
-              case "Zero":
-                return reflect(Negative.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Zero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(NonZero.class);
-              case "PositiveOrZero":
-                return reflect(PositiveOrZero.class);
-              case "NegativeOrZero":
-                return reflect(NegativeOrZero.class);
-              case "Positive":
-                return reflect(Positive.class);
-              case "Negative":
-                return reflect(Negative.class);
-              case "Zero":
-                return reflect(Zero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Top":
+        if (isNonZero(lhs)) {
+          if (isNonZero(rhs)) {
             return reflect(Top.class);
           }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(NonZero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isPositiveOrZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegativeOrZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isPositive(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegative(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(NonZero.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Zero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isTop(lhs)) {
+          return reflect(Top.class);
+        }
+
+        break;
+      case MINUS:
+        if (isNonZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(NonZero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isPositiveOrZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegativeOrZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isPositive(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegative(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(NonZero.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Zero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isTop(lhs)) {
+          return reflect(Top.class);
+        }
+
         break;
       case TIMES:
-        switch (lhs.toString()) {
-          case "NonZero":
-            if (equal(rhs, reflect(Zero.class)))
-              return reflect(Zero.class);
-
-            return reflect(Top.class);
-          case "PositiveOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(PositiveOrZero.class);
-              case "NegativeOrZero":
-                return reflect(NegativeOrZero.class);
-              case "Positive":
-                return reflect(PositiveOrZero.class);
-              case "Negative":
-                return reflect(NegativeOrZero.class);
-              case "Zero":
-                return reflect(Zero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "NegativeOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(NegativeOrZero.class);
-              case "NegativeOrZero":
-                return reflect(PositiveOrZero.class);
-              case "Positive":
-                return reflect(NegativeOrZero.class);
-              case "Negative":
-                return reflect(PositiveOrZero.class);
-              case "Zero":
-                return reflect(Zero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Positive":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(PositiveOrZero.class);
-              case "NegativeOrZero":
-                return reflect(NegativeOrZero.class);
-              case "Positive":
-                return reflect(Positive.class);
-              case "Negative":
-                return reflect(Negative.class);
-              case "Zero":
-                return reflect(Zero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Negative":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(NegativeOrZero.class);
-              case "NegativeOrZero":
-                return reflect(PositiveOrZero.class);
-              case "Positive":
-                return reflect(Negative.class);
-              case "Negative":
-                return reflect(Positive.class);
-              case "Zero":
-                return reflect(Zero.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Zero":
+        if (isNonZero(lhs)) {
+          if (isZero(rhs)) {
             return reflect(Zero.class);
-          case "Top":
-            return reflect(Top.class);
+          }
+
+          return reflect(Top.class);
         }
+
+        if (isPositiveOrZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Zero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegativeOrZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Zero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isPositive(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Zero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegative(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(Negative.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(Positive.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Zero.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isZero(lhs)) {
+          return reflect(Zero.class);
+        }
+
+        if (isTop(lhs)) {
+          return reflect(Top.class);
+        }
+
+        break;
       case MOD:
       case DIVIDE:
-        switch (lhs.toString()) {
-          case "NonZero":
+        if (isNonZero(lhs)) {
+          return reflect(Top.class);
+        }
+
+        if (isPositiveOrZero(lhs)) {
+          if (isNonZero(rhs)) {
             return reflect(Top.class);
-          case "PositiveOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(PositiveOrZero.class);
-              case "Negative":
-                return reflect(NegativeOrZero.class);
-              case "Zero":
-                return reflect(Top.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "NegativeOrZero":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(NegativeOrZero.class);
-              case "Negative":
-                return reflect(PositiveOrZero.class);
-              case "Zero":
-                return reflect(Top.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Positive":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(PositiveOrZero.class);
-              case "Negative":
-                return reflect(NegativeOrZero.class);
-              case "Zero":
-                return reflect(Top.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Negative":
-            switch (rhs.toString()) {
-              case "NonZero":
-                return reflect(Top.class);
-              case "PositiveOrZero":
-                return reflect(Top.class);
-              case "NegativeOrZero":
-                return reflect(Top.class);
-              case "Positive":
-                return reflect(NegativeOrZero.class);
-              case "Negative":
-                return reflect(PositiveOrZero.class);
-              case "Zero":
-                return reflect(Top.class);
-              case "Top":
-                return reflect(Top.class);
-            }
-            break;
-          case "Zero":
+          }
+          if (isPositiveOrZero(rhs)) {
             return reflect(Top.class);
-          case "Top":
+          }
+          if (isNegativeOrZero(rhs)) {
             return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegativeOrZero(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isPositive(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isNegative(lhs)) {
+          if (isNonZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositiveOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isNegativeOrZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isPositive(rhs)) {
+            return reflect(NegativeOrZero.class);
+          }
+          if (isNegative(rhs)) {
+            return reflect(PositiveOrZero.class);
+          }
+          if (isZero(rhs)) {
+            return reflect(Top.class);
+          }
+          if (isTop(rhs)) {
+            return reflect(Top.class);
+          }
+        }
+
+        if (isZero(lhs)) {
+          return reflect(Zero.class);
+        }
+
+        if (isTop(lhs)) {
+          return reflect(Top.class);
         }
         break;
     }
@@ -567,6 +665,34 @@ public class DivByZeroTransfer extends CFTransfer {
 
   // ========================================================================
   // Useful helpers
+
+  private boolean isZero(AnnotationMirror lhs) {
+    return AnnotationUtils.areSame(lhs, reflect(Zero.class));
+  }
+ 
+  private boolean isNonZero(AnnotationMirror lhs) {
+    return AnnotationUtils.areSame(lhs, reflect(NonZero.class));
+  }
+ 
+  private boolean isPositiveOrZero(AnnotationMirror lhs) {
+    return AnnotationUtils.areSame(lhs, reflect(PositiveOrZero.class));
+  }
+
+  private boolean isNegativeOrZero(AnnotationMirror lhs) {
+    return AnnotationUtils.areSame(lhs, reflect(NegativeOrZero.class));
+  }
+
+  private boolean isPositive(AnnotationMirror lhs) {
+    return AnnotationUtils.areSame(lhs, reflect(Positive.class));
+  }
+
+  private boolean isNegative(AnnotationMirror lhs) {
+    return AnnotationUtils.areSame(lhs, reflect(Negative.class));
+  }
+
+  private boolean isTop(AnnotationMirror lhs) {
+    return AnnotationUtils.areSame(lhs, reflect(Top.class));
+  }
 
   /** Get the top of the lattice */
   private AnnotationMirror top() {

@@ -87,4 +87,56 @@ class AssignmentProvidedTests {
     // :: error: divide.by.zero
     int k = 1 / z;
   }
+
+  public static void m() {
+    int d = 1;
+    d--;
+
+    int n = 1;
+    // :: error: divide.by.zero
+    int c = n / d;
+  }
+
+  public static void n() {
+    // :: error: divide.by.zero
+    int a = 1 % (1 - 1);
+    int y = 1;
+    // :: error: divide.by.zero
+    int x = 1 % (y - y);
+    int z = y - y;
+    // :: error: divide.by.zero
+    int k = 1 % z;
+  }
+
+  public static void o() {
+    int zero_the_hard_way = 0 + 0 - 0 * 0;
+    // :: error: divide.by.zero
+    int x = 1 % zero_the_hard_way;
+
+    int one_the_hard_way = 0 * 1 + 1;
+    int y = 1 % one_the_hard_way;
+  }
+
+  public static void awesometest() {
+    // :: error: divide.by.zero
+    int a = 123 / 0;
+    int y = 1;
+    y--;
+    // :: error: divide.by.zero
+    int x = 1 / y;
+ 
+ 
+    int z = 1;
+    // :: error: divide.by.zero
+    z /= 0;
+ 
+ 
+    int k = 100;
+    // :: error: divide.by.zero
+    k /= y;
+
+    int m = 100;
+    // :: error: divide.by.zero
+    m %= y;
+  }
 }
